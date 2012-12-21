@@ -1,0 +1,25 @@
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label" for="inputMake">Make</label>
+    <div class="controls">
+      <input type="text" ng-model="car.make" id="inputMake" placeholder="Car Manufaturer">
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="inputModel">Model</label>
+    <div class="controls">
+      <input type="text" ng-model="car.model" id="inputModel" placeholder="Car Name">
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="inputYear">Year</label>
+    <div class="controls">
+      <input type="number" ng-model="car.year" id="inputMake" placeholder="2000">
+    </div>
+  </div>
+  <div class="form-actions">
+    <button class="btn btn-primary" ng-click="save()">Save</button>
+  </div>
+</form>

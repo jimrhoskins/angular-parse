@@ -1,0 +1,22 @@
+<div >
+  <div ng-repeat="car in cars">
+    <h2 title="{{car.objectId}}">
+      <a ng-href="#/cars/{{car.objectId}}">
+        {{car.make}} {{car.model}} 
+      </a>
+      <small>{{car.year}}</small>
+    </h2>
+    <div class="well">
+      Created: {{car.createdAt| date:"medium"}} | 
+      Updated: {{car.updatedAt| date:"medium"}} | 
+      <button class="btn btn-danger" ng-click="destroy(car)">
+        Destroy
+      </button>
+      <a href="#/edit-car/{{car.objectId}}" class="btn" >
+        Edit
+      </a>
+    </div>
+  </div>
+  {{cars}}
+</div>
+
