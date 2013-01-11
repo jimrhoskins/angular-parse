@@ -45,10 +45,9 @@ Angular-parse also requires you provide the value "ParseConfig" as an
 object with the following format
 
 ```javascript
-app.value("ParseConfig", {
-  applicationId: "YOUR PARSE APPLICATION ID",
-  apiKey: "YOUR PARSE REST API KEY"
-})
+app.config(function (ParseProvider) {
+  ParseProvider.initialize("PARSE_APPLICATION_ID", "PARSE_REST_API_KEY");
+});
 ```
 
 ## Defining Models

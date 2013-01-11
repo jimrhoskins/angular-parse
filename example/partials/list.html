@@ -1,20 +1,28 @@
 <div >
-  <div ng-repeat="car in cars">
-    <h2 title="{{car.objectId}}">
-      <a ng-href="#/cars/{{car.objectId}}">
-        {{car.make}} {{car.model}} 
+  <div class="header">
+    <h1> Forum</h1>
+  </div>
+  <div class="new-form" ng-controller="PostForm" ng-include="'partials/form.html'"> </div>
+
+  <div class="page-header clearfix">
+    <h4 class="pull-left"> Disussions</h4>
+    <h4 class="pull-right">Comments</h4>
+  </div>
+  <div ng-repeat="post in posts" class="post row-fluid">
+    <div class="span2">
+      Avatar
+    </div>
+    <div class="span8">
+      <a class="title" ng-href="#/posts/{{post.objectId}}">
+        {{post.title}} 
       </a>
-      <small>{{car.year}}</small>
-    </h2>
-    <div class="well">
-      Created: {{car.createdAt| date:"medium"}} | 
-      Updated: {{car.updatedAt| date:"medium"}} | 
-      <button class="btn btn-danger" ng-click="destroy(car)">
-        Destroy
-      </button>
-      <a href="#/edit-car/{{car.objectId}}" class="btn" >
-        Edit
-      </a>
+      <div class="meta">
+        Posted by
+        {{post.author.username}}
+      </div>
+    </div>
+    <div class="comment-count span2">
+      {{post.commentCount}}
     </div>
   </div>
   {{cars}}

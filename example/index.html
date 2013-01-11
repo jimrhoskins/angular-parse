@@ -1,16 +1,73 @@
 <!DOCTYPE html>
-<html ng-app="CarDealer">
+<html ng-app="Forum">
 <head>
   <title>Parse Example</title>
   <link rel="stylesheet" href="./lib/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 <body >
+<div class="navbar navbar-inverse navbar-static-top">
+  <div class="navbar-inner" ng-controller="AuthCtrl">
+    <div class="container">
+      <div>
+        <a href="#" class="brand">Angular-Parse Example</a>
+      </div>
+      <div class="navbar-form pull-right" ng-hide="auth.currentUser">
+        <div ng-hide="showLogin">
+          <a class="btn btn-primary" ng-click="showLogin=true">Sign in</a>
+          <a class="btn btn-primary" href="#/register">Register</a>
+        </div>
+        <form ng-show="showLogin"  class="navbar-form"
+          ng-submit="signin(user)" ng-controller="SignInCtrl">
+          <input type="text" ng-model="user.username" placeholder="username" autofocus class="span2">
+          <input type="password" ng-model="user.password" placeholder="password" class="span2">
+          <button class="btn btn-primary" >Sign In</button>
+        </form>
+      </div>
+      <div class="logout navbar-form pull-right" ng-show="auth.currentUser">
+        Signed in as {{auth.currentUser.username}}
+        <button class="btn btn-primary" >Sign Out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container">
-  <h1>Parse</h1>
-  <a href="#/new-car" class="btn">
-    New
-  </a>
-  <div ng-view></div>
+  <div class="row">
+    <div id="main" class="span9" ng-view></div>
+    <div class="span3">
+      <div class="auth" ng-controller="AuthCtrl">
+        <div  ng-hide="auth.currentUser">
+          <form  ng-submit="signin(user)" ng-controller="SignInCtrl">
+            <fieldset>
+              <legend>Sign In </legend>
+
+              <div class="alert alert-danger" ng-show="errorMessage">
+                {{errorMessage}}
+              </div>
+
+              <label for="fieldUsername">Username</label>
+              <input type="text" ng-model="user.username"  id="fieldUsername">
+              <label for="fieldUsername">Password</label>
+              <input type="password" ng-model="user.password" id="fieldPassword">
+
+              <div class="form-actions">
+                <button class="btn btn-primary" >Sign In</button>
+                or 
+                <a class="btn btn-info" href="#/register">Register</a>
+              </div>
+            </fieldset>
+          </form>
+          <hr>
+        </div>
+        <div class="logout  " ng-show="auth.currentUser">
+          <h2>Signed In</h2>
+          <h3>{{auth.currentUser.username}}</h3>
+          <button ng-click="signout()" class="btn btn-link" >Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
   <script src="../lib/angular/angular.js"></script>
   <script src="../angular-parse.js"></script>

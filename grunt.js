@@ -11,6 +11,10 @@ module.exports = function(grunt) {
       example: {
         files: ['example/coffee/*.coffee'],
         tasks: ['coffee:example']
+      },
+      cloud: {
+        files: ['example/parse/src/*.coffee'],
+        tasks: ['coffee:cloud', 'parse-deploy']
       }
     },
 
@@ -24,6 +28,10 @@ module.exports = function(grunt) {
         src: ['example/coffee/*.coffee'],
         dest: 'example/js'
       },
+      cloud: {
+        src: ['example/parse/src/*.coffee'],
+        dest: 'example/parse/cloud'
+      }
     },
     testacularServer: {
       unit: {
@@ -39,6 +47,19 @@ module.exports = function(grunt) {
   grunt.registerTask('default', 'coffee');
 
   grunt.registerTask('dev', 'server testacularServer watch')
+
+  grunt.registerTask('parse-deploy', function () {
+    var done = this.async();
+
+
+    grunt.utils.spawn({
+      cmd: "parse",
+      args: ["deploy"],
+      opts: {
+        cwd: "./example/parse"
+      }
+    },function () {done(); });
+  });
 
 
 };

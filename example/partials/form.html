@@ -1,25 +1,31 @@
-<form class="form-horizontal">
-  <div class="control-group">
-    <label class="control-label" for="inputMake">Make</label>
-    <div class="controls">
-      <input type="text" ng-model="car.make" id="inputMake" placeholder="Car Manufaturer">
-    </div>
-  </div>
+<form >
+  <input 
+    type="text" 
+    class="input-xxlarge"
+    ng-model="post.title"  
+    placeholder="Say Something"
+    ng-click="hideForm=false"
+  >
 
-  <div class="control-group">
-    <label class="control-label" for="inputModel">Model</label>
-    <div class="controls">
-      <input type="text" ng-model="car.model" id="inputModel" placeholder="Car Name">
-    </div>
-  </div>
+  <div ng-hide="hideForm">
+    <textarea  
+      class="input-xxlarge"
+      rows="10"
+      ng-model="post.body" 
+      placeholder="Tell us more"
+    ></textarea>
 
-  <div class="control-group">
-    <label class="control-label" for="inputYear">Year</label>
-    <div class="controls">
-      <input type="number" ng-model="car.year" id="inputMake" placeholder="2000">
+    <input 
+      type="text" 
+      ng-list
+      class="input-xxlarge"
+      ng-model="post.tags"  
+      placeholder="tags, separated, by commas"
+    >
+
+
+    <div >
+      <button class="btn btn-primary" ng-click="save()">Submit your post</button>
     </div>
-  </div>
-  <div class="form-actions">
-    <button class="btn btn-primary" ng-click="save()">Save</button>
   </div>
 </form>

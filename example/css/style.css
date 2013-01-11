@@ -1,0 +1,54 @@
+body {
+  background: #E3E3E3;
+}
+
+body > .navbar {
+  margin-bottom: 50px;
+}
+
+#main {
+  background: #FFF;
+  padding: 10px;
+  margin: 10px -10px;
+  box-shadow: 0 0 1px #000;
+}
+
+.header {
+  border-bottom: solid 1px #CCC;
+  padding-bottom: 10px;
+}
+
+.new-form {
+  background: #E0E0E7;
+  padding: 10px;
+  margin: 10px -10px;
+  padding-bottom: -10px;
+}
+
+.post .title {
+  font-size: 2em;
+}
+
+.comment-count {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+}
+
+form {
+  margin: 0;
+}
+
+form input.input-xxlarge,
+form textarea.input-xxlarge {
+  width: 680px;
+  font-size: 24px;
+  line-height: 24px;
+  height: auto;
+}
+
+
+.post {
+  margin-bottom: 20px;
+}
+

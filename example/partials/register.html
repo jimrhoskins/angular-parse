@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="offset3 span6">
+
+    <h1 class="page-header"> Register </h1>
+    <form class="form-horizontal" ng-submit="register(user)">
+      <div ng-show="errorMessage" class="alert alert-danger">
+        <strong>Error:</strong> {{errorMessage}}
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="inputUsername">Username</label>
+        <div class="controls">
+          <input type="text" ng-model="user.username" id="inputUsername" >
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="inputPassword">Password</label>
+        <div class="controls">
+          <input type="password" ng-model="user.password" id="inputPassword" >
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="inputPassword2">Password Again</label>
+        <div class="controls">
+          <input type="password" ng-model="user.passwordConfirm"
+          id="inputPassword2" >
+        </div>
+      </div>
+
+
+      <div class="form-actions">
+        <button class="btn btn-primary">Sign In</button>
+      </div>
+    </form>
+
+  </div>
+</div>

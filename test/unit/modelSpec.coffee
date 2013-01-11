@@ -20,18 +20,12 @@ describe 'Model', ->
   Car = null
 
   beforeEach ->
-    # Load Module
-    module('Parse')
+    angular.module('ParseSpec', ['Parse']).config (ParseProvider) ->
+      ParseProvider.initialize 'appId', 'apiKey'
 
-    # Provide Configuration
-    module ($provide) -> 
-      $provide.value 'ParseConfig', 
-        apiKey: 'apiKey'
-        applicationId: 'appId'
-      return
+    module 'ParseSpec'
 
-    inject (Parse, $injector) ->
-      # Helper method for matching API URLS
+    inject ($injector, Parse) ->
       url = (path) ->
         "#{Parse.BaseUrl}#{path}"
 
@@ -45,14 +39,14 @@ describe 'Model', ->
         @configure 'Car', 'make', 'model', 'year'
 
 
+
+
+
+
   afterEach ->
     backend.verifyNoOutstandingExpectation()
     backend.verifyNoOutstandingRequest()
 
-  #Sanity Check
-  it 'has the correct test config', inject (ParseConfig) ->
-    expect(ParseConfig.applicationId).toEqual('appId')
-    expect(ParseConfig.apiKey).toEqual('apiKey')
 
   it 'exists', inject (Parse) ->
     expect(Parse.Model).not.toBeNull()
@@ -104,14 +98,13 @@ describe 'Model', ->
         signedHeaders
         
       ).respond
-        createdAt: "2011-08-20T02:06:57.931Z"
-        objectId: "foobarbaz"
+        updatedAt: "2012-08-20T02:06:57.931Z"
 
       car.save().then (c) ->
         expect(c).toBe(car)
 
       backend.flush()
-      expect(car.objectId).toEqual('foobarbaz')
+      expect(car.updatedAt).toEqual('2012-08-20T02:06:57.931Z')
       expect(car.isNew()).toEqual(false)
 
 

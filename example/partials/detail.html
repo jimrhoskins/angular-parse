@@ -1,8 +1,39 @@
 <div>
+  <div class="header">
+    <a ng-href="#" >&laquo;  Forum</a>
+  </div>
 
-  <h1>{{car.make}} {{car.model}}</h1>
+  <h1>{{post.title}}</h1>
+  <div>
+    Asked by <strong>{{post.author.username}}</strong>
   <div class="well">
-    Created: {{car.createdAt| date:"medium"}} | 
-    Updated: {{car.updatedAt| date:"medium"}} | 
+    {{post.body}}
+  </div>
+
+  <span ng-repeat="tag in post.tags">
+    <span class="badge badge-info" >{{tag}}</span>
+  </span>
+
+  <h3>Comments</h3>
+  <div class="new-form" ng-controller="CommentForm">
+    <form ng-submit="save()">
+      <textarea  
+        class="input-xxlarge"
+        rows="{{numRows || 1}}"
+        ng-model="comment.body" 
+        placeholder="Make your voice heard!"
+        ng-click="numRows = 10"
+      ></textarea>
+      <div ng-show="numRows > 2">
+        <button class="btn btn-primary">Submit your comment</button>
+      </div>
+    </form>
+  </div>
+  <div class="comment row-fluid" ng-repeat="comment in comments">
+    <div class="span2">Avatar</div>
+    <div class="span10">
+      <div><strong>{{comment.author.username}}</strong></div>
+      {{comment.body}}
+    </div>
   </div>
 </div>

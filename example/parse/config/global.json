@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "Forum": {
+            "applicationId": "x58FvFYxi4SDIRdJck4hFVv1huo8F409UnfERfUU", 
+            "masterKey": "NdmAC7MEaW1v8wzYyO6z8hqiyvmqPIcJKgeargKj"
+        }, 
+        "_default": {
+            "link": "Forum"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.1.15"
+    }
+}
