@@ -1,0 +1,12 @@
+{
+	"name": "angular-parse",
+	"version": "0.1.0",
+	"main": [
+		"angular-parse.js"
+	],
+	"dependencies": {
+	},
+	"install": {
+		"path": "lib"
+	}
+}
