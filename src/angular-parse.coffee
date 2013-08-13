@@ -209,7 +209,7 @@ module.provider 'Parse', ->
             if key of this
               obj = @[key]
 
-              if obj.objectId and obj.constructor?.className
+              if obj? and obj.objectId and obj.constructor?.className
                 # Pointer
                 obj = {
                   __type: "Pointer"

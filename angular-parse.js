@@ -270,7 +270,7 @@
               key = _ref[_i];
               if (key in this) {
                 obj = this[key];
-                if (obj.objectId && ((_ref1 = obj.constructor) != null ? _ref1.className : void 0)) {
+                if ((obj != null) && obj.objectId && ((_ref1 = obj.constructor) != null ? _ref1.className : void 0)) {
                   obj = {
                     __type: "Pointer",
                     className: obj.constructor.className,
