@@ -9,7 +9,6 @@ preprocessors = {
   "**/*.coffee": "coffee"
 }
 
-
 // list of files / patterns to load in the browser
 files = [
   JASMINE,

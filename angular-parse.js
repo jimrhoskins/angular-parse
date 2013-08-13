@@ -58,7 +58,7 @@
         return CONFIG.applicationId = applicationId;
       },
       $get: function($http, $timeout, persist) {
-        var Parse;
+        var Parse, _ref;
         Parse = {
           BaseUrl: "https://api.parse.com/1",
           _request: function(method, path, data, params) {
@@ -116,7 +116,7 @@
             },
             resumeSession: function() {
               return persist.get(['PARSE_SESSION_TOKEN', 'PARSE_USER_INFO']).then(function(r) {
-                var sessionToken, user, userAttrs;
+                var e, sessionToken, user, userAttrs;
                 userAttrs = r.PARSE_USER_INFO;
                 sessionToken = r.PARSE_SESSION_TOKEN;
                 if (userAttrs && sessionToken) {
@@ -125,7 +125,8 @@
                     Parse.auth.currentUser = user;
                     Parse.auth.sessionToken = sessionToken;
                     return user.refresh();
-                  } catch (e) {
+                  } catch (_error) {
+                    e = _error;
                     return false;
                   }
                 }
@@ -155,7 +156,6 @@
           }
         };
         Parse.Model = (function() {
-
           Model.pathBase = function() {
             return "/classes/" + this.className;
           };
@@ -287,11 +287,11 @@
 
         })();
         Parse.User = (function(_super) {
-
           __extends(User, _super);
 
           function User() {
-            return User.__super__.constructor.apply(this, arguments);
+            _ref = User.__super__.constructor.apply(this, arguments);
+            return _ref;
           }
 
           User.configure('users', 'username', 'password');

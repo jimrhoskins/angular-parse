@@ -1,6 +1,6 @@
 {
   "name": "angular-parse",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "AngularJS interface to Parse",
   "main": "angular-parse.js",
   "directories": {
@@ -10,9 +10,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "BSD",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jimrhoskins/angular-parse.git"
+  },
   "devDependencies": {
-    "grunt-contrib-coffee": "~0.3.2",
-    "grunt-coffee": "0.0.6",
-    "grunt-testacular": "~0.2.2"
+      "grunt": "~0.4.1",
+      "grunt-contrib-coffee": "~0.7.0",
+      "grunt-contrib-watch": "~0.5.1",
+      "grunt-karma": "~0.4.4"
   }
 }
