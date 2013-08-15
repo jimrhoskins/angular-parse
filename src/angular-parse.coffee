@@ -25,7 +25,6 @@ module.factory 'persist', ($q, $window) ->
         localStorage.removeItem key
       $q.when true
 
-
 module.provider 'Parse', ->
   CONFIG = {}
   return {
@@ -40,7 +39,6 @@ module.provider 'Parse', ->
 
         _request: (method, path, data, params) ->
 
-
           if angular.isArray path
             [klass, id] = path
             path = "#{klass.pathBase()}/#{id}"
@@ -50,7 +48,6 @@ module.provider 'Parse', ->
           else if path.objectId and path.constructor?.className
             isUserClass = path.constructor.isUserClass
             path = "#{path.constructor.pathBase()}/#{path.objectId}"
-
 
           headers = 
             "X-Parse-Application-Id": CONFIG.applicationId
@@ -105,8 +102,6 @@ module.provider 'Parse', ->
 
                 catch e
                   false
-              
-
 
           register: (username, password) ->
             new Parse.User(
@@ -114,7 +109,7 @@ module.provider 'Parse', ->
               password: password
             ).save().then (user) ->
               Parse.auth._login(user)
-          
+
           login: (username, password) ->
             Parse._request("GET", "/login", null, {
               username: username
@@ -129,10 +124,7 @@ module.provider 'Parse', ->
             #delete localStorage.PARSE_USER_INFO
             Parse.auth.currentUser = null
             Parse.auth.sessionToken = null
-
-
       }
-
 
       class Parse.Model 
         @pathBase: ->
@@ -143,14 +135,11 @@ module.provider 'Parse', ->
             .then (response) =>
               new @(response.data)
 
-
         @query: (params) ->
           Parse._request('GET', @, null, params) 
           .then (response) =>
             for item in response.data.results
               new @(item)
-
-
 
         @configure: (name, attributes...) ->
           @className = name
@@ -221,11 +210,9 @@ module.provider 'Parse', ->
 
           result
 
-
       class Parse.User extends Parse.Model
         @configure 'users', 'username', 'password'
         @pathBase: -> "/users"
-
 
         save: ->
           console.log this

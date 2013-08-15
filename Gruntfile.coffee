@@ -36,7 +36,7 @@ module.exports = (grunt) ->
     watch:
       main:
         options:
-          livereload: true
+          livereload: false
         files: ['src/**/*.coffee', 'test/**/*.coffee']
         tasks: ['coffee', 'karma:unit:run']
 
