@@ -39,10 +39,6 @@ describe 'Model', ->
         @configure 'Car', 'make', 'model', 'year'
 
 
-
-
-
-
   afterEach ->
     backend.verifyNoOutstandingExpectation()
     backend.verifyNoOutstandingRequest()
@@ -184,3 +180,31 @@ describe 'Model', ->
         expect(cars[1].model).toBe "Camry"
 
       backend.flush()
+
+describe 'User', ->
+
+  it 'should not have custom property', ->
+    angular.module('ParseSpec', ['Parse']).config (ParseProvider) ->
+      ParseProvider.initialize 'appId', 'apiKey'
+
+    module 'ParseSpec'
+
+    inject (ParseUser) ->
+      expect(ParseUser).toBeDefined()
+      expect(ParseUser.attributes).toContain('username')
+      expect(ParseUser.attributes).not.toContain('property')
+
+  it 'should have property when extended', ->
+    angular.module('Parse').factory 'ParseCustomUser', (ParseDefaultUser) ->
+      class CustomUser extends ParseDefaultUser
+        @configure 'users', 'username', 'password', 'property'
+
+    angular.module('ParseSpec', ['Parse']).config (ParseProvider) ->
+      ParseProvider.initialize 'appId', 'apiKey'
+
+    module 'ParseSpec'
+
+    inject (ParseUser) ->
+      expect(ParseUser).toBeDefined()
+      expect(ParseUser.attributes).toContain('username')
+      expect(ParseUser.attributes).toContain('property')

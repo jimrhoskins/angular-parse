@@ -195,16 +195,21 @@ module.factory 'ParseModel', (ParseUtils) ->
 
       result
 
-module.factory 'ParseUser', (ParseModel) ->
+module.factory 'ParseDefaultUser', (ParseModel) ->
   class User extends ParseModel
     @configure 'users', 'username', 'password'
     @pathBase: -> "/users"
 
     save: ->
-      console.log this
       super().then (user) =>
         delete user.password
         user
+
+module.factory 'ParseUser', (ParseDefaultUser, ParseCustomUser) ->
+  if ParseCustomUser? and (new ParseCustomUser instanceof ParseDefaultUser)
+    return ParseCustomUser
+  else
+    return ParseDefaultUser
 
 module.provider 'Parse', ->
   return {
@@ -218,3 +223,6 @@ module.provider 'Parse', ->
       User: ParseUser
       auth: ParseAuth
   }
+
+angular.module('Parse').factory 'ParseCustomUser', (ParseDefaultUser) ->
+  ParseDefaultUser

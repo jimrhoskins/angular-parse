@@ -26,7 +26,7 @@
             result[key] = void 0;
           }
         }
-        return $q.when(result);
+        return result;
       },
       set: function(obj) {
         var key, val;
@@ -35,7 +35,7 @@
           val = obj[key];
           store.setItem(key, val);
         }
-        return $q.when(true);
+        return true;
       },
       remove: function(keys) {
         var key, _i, _len;
@@ -46,7 +46,7 @@
           key = keys[_i];
           localStorage.removeItem(key);
         }
-        return $q.when(true);
+        return true;
       }
     };
   });
@@ -111,22 +111,21 @@
         return user;
       },
       resumeSession: function() {
-        return persist.get(['PARSE_SESSION_TOKEN', 'PARSE_USER_INFO']).then(function(r) {
-          var e, sessionToken, user, userAttrs;
-          userAttrs = r.PARSE_USER_INFO;
-          sessionToken = r.PARSE_SESSION_TOKEN;
-          if (userAttrs && sessionToken) {
-            try {
-              user = new ParseUser(JSON.parse(userAttrs));
-              auth.currentUser = user;
-              auth.sessionToken = sessionToken;
-              return user.refresh();
-            } catch (_error) {
-              e = _error;
-              return false;
-            }
+        var e, results, sessionToken, user, userAttrs;
+        results = persist.get(['PARSE_SESSION_TOKEN', 'PARSE_USER_INFO']);
+        userAttrs = results.PARSE_USER_INFO;
+        sessionToken = results.PARSE_SESSION_TOKEN;
+        if (userAttrs && sessionToken) {
+          try {
+            user = new ParseUser(JSON.parse(userAttrs));
+            auth.currentUser = user;
+            auth.sessionToken = sessionToken;
+            return user.refresh();
+          } catch (_error) {
+            e = _error;
+            return false;
           }
-        });
+        }
       },
       register: function(username, password) {
         return new ParseUser({
@@ -287,7 +286,7 @@
     })();
   });
 
-  module.factory('ParseUser', function(ParseModel) {
+  module.factory('ParseDefaultUser', function(ParseModel) {
     var User, _ref;
     return User = (function(_super) {
       __extends(User, _super);
@@ -305,7 +304,6 @@
 
       User.prototype.save = function() {
         var _this = this;
-        console.log(this);
         return User.__super__.save.call(this).then(function(user) {
           delete user.password;
           return user;
@@ -315,6 +313,14 @@
       return User;
 
     })(ParseModel);
+  });
+
+  module.factory('ParseUser', function(ParseDefaultUser, ParseCustomUser) {
+    if ((ParseCustomUser != null) && (new ParseCustomUser instanceof ParseDefaultUser)) {
+      return ParseCustomUser;
+    } else {
+      return ParseDefaultUser;
+    }
   });
 
   module.provider('Parse', function() {
@@ -332,6 +338,10 @@
         };
       }
     };
+  });
+
+  angular.module('Parse').factory('ParseCustomUser', function(ParseDefaultUser) {
+    return ParseDefaultUser;
   });
 
 }).call(this);

@@ -74,7 +74,6 @@ Using JavaScript:
 // Not implemented yet, sorry
 ```
 
-
 ## Using Models
 
 A model acts much the same as a normal JavaScript object with a
@@ -139,6 +138,19 @@ Car.find("someObjectId").then(function (car) {
   })
 })
 ```
+
+### Defining a custom user class
+
+A simple User class is provided to you. However, you can subclass it:
+
+```coffeescript
+angular.module('Parse').factory 'ParseCustomUser', (ParseDefaultUser) ->
+      class CustomUser extends ParseDefaultUser
+        @configure 'users', 'username', 'password', 'property'
+```
+
+In this manner, all User instances returned by the Parse methods
+will be of your custom class.
 
 ### Contributing
 
