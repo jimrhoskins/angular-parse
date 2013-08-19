@@ -103,8 +103,8 @@ describe 'auth', ->
         user = new Parse.User
           username: 'foobar'
           sessionToken: 'sessTok'
-        $window.localStorage.PARSE_USER_INFO = JSON.stringify(user.attributes())
-        $window.localStorage.PARSE_SESSION_TOKEN = user.sessionToken
+        $window.localStorage.setItem('PARSE_USER_INFO', JSON.stringify(user.attributes()))
+        $window.localStorage.setItem('PARSE_SESSION_TOKEN', user.sessionToken)
 
       it 'exists', inject (Parse) ->
         Parse.auth.resumeSession()
