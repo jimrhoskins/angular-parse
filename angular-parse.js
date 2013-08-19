@@ -94,7 +94,7 @@
     };
   });
 
-  module.factory('ParseAuth', function(persist, ParseUser, ParseUtils) {
+  module.factory('ParseAuth', function(persist, ParseUser, ParseUtils, $q) {
     var auth;
     return auth = {
       sessionToken: null,
@@ -112,21 +112,25 @@
         return user;
       },
       resumeSession: function() {
-        var e, results, sessionToken, user, userAttrs;
+        var deferred, e, results, sessionToken, user, userAttrs;
         results = persist.get(['PARSE_SESSION_TOKEN', 'PARSE_USER_INFO']);
         userAttrs = results.PARSE_USER_INFO;
         sessionToken = results.PARSE_SESSION_TOKEN;
+        deferred = $q.defer();
         if (userAttrs && sessionToken) {
           try {
             user = new ParseUser(JSON.parse(userAttrs));
             auth.currentUser = user;
             auth.sessionToken = sessionToken;
-            return user.refresh();
+            deferred.resolve(user.refresh());
           } catch (_error) {
             e = _error;
-            return false;
+            deferred.reject('User attributes not parseable');
           }
+        } else {
+          deferred.reject('User attributes or Session Token not found');
         }
+        return deferred.promise;
       },
       register: function(username, password) {
         return new ParseUser({

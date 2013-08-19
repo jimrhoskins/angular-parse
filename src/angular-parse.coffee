@@ -28,42 +28,42 @@ module.factory 'persist', ($q, $window) ->
       true
 
 module.factory 'ParseUtils', ($http, $window) ->
-	Parse =
-		BaseUrl: "https://api.parse.com/1"
+  Parse =
+    BaseUrl: "https://api.parse.com/1"
 
-		_request: (method, path, data, params) ->
+    _request: (method, path, data, params) ->
 
-			if angular.isArray path
-				[klass, id] = path
-				path = "#{klass.pathBase()}/#{id}"
-			else if path.className
-				path = "#{path.pathBase()}"
-			else if path.objectId and path.constructor?.className
-				path = "#{path.constructor.pathBase()}/#{path.objectId}"
+      if angular.isArray path
+        [klass, id] = path
+        path = "#{klass.pathBase()}/#{id}"
+      else if path.className
+        path = "#{path.pathBase()}"
+      else if path.objectId and path.constructor?.className
+        path = "#{path.constructor.pathBase()}/#{path.objectId}"
 
-			headers =
-				"X-Parse-Application-Id": CONFIG.applicationId
-				"X-Parse-REST-API-KEY" : CONFIG.apiKey
-				"Content-Type" : "application/json"
+      headers =
+        "X-Parse-Application-Id": CONFIG.applicationId
+        "X-Parse-REST-API-KEY" : CONFIG.apiKey
+        "Content-Type" : "application/json"
 
-			if $window.localStorage.key('PARSE_SESSION_TOKEN')
-				headers["X-Parse-Session-Token"] = $window.localStorage.getItem('PARSE_SESSION_TOKEN')
+      if $window.localStorage.key('PARSE_SESSION_TOKEN')
+        headers["X-Parse-Session-Token"] = $window.localStorage.getItem('PARSE_SESSION_TOKEN')
 
-			$http
-				method: method
-				url:  @BaseUrl + path
-				data: data
-				params: params
-				headers: headers
+      $http
+        method: method
+        url:  @BaseUrl + path
+        data: data
+        params: params
+        headers: headers
 
-		func: (name) ->
-			(data) -> Parse.callFunction name, data
+    func: (name) ->
+      (data) -> Parse.callFunction name, data
 
-		callFunction: (name, data) ->
-			Parse._request("POST", "/functions/#{name}", data).then (r) ->
-				r.data.result
+    callFunction: (name, data) ->
+      Parse._request("POST", "/functions/#{name}", data).then (r) ->
+        r.data.result
 
-module.factory 'ParseAuth', (persist, ParseUser, ParseUtils) ->
+module.factory 'ParseAuth', (persist, ParseUser, ParseUtils, $q) ->
   auth =
     sessionToken: null
     currentUser: null
@@ -82,14 +82,18 @@ module.factory 'ParseAuth', (persist, ParseUser, ParseUtils) ->
       results = persist.get(['PARSE_SESSION_TOKEN', 'PARSE_USER_INFO'])
       userAttrs = results.PARSE_USER_INFO
       sessionToken = results.PARSE_SESSION_TOKEN
+      deferred = $q.defer();
       if userAttrs and sessionToken
         try
           user = new ParseUser(JSON.parse(userAttrs))
           auth.currentUser = user
           auth.sessionToken = sessionToken
-          user.refresh()
+          deferred.resolve(user.refresh())
         catch e
-          false
+          deferred.reject('User attributes not parseable')
+      else
+        deferred.reject('User attributes or Session Token not found')
+      return deferred.promise
 
     register: (username, password) ->
       new ParseUser(
