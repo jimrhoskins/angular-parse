@@ -52,7 +52,8 @@
   });
 
   module.factory('ParseUtils', function($http, $window) {
-    return {
+    var Parse;
+    return Parse = {
       BaseUrl: "https://api.parse.com/1",
       _request: function(method, path, data, params) {
         var headers, id, klass, _ref;
@@ -93,7 +94,7 @@
     };
   });
 
-  module.factory('ParseAuth', function(persist, ParseUser) {
+  module.factory('ParseAuth', function(persist, ParseUser, ParseUtils) {
     var auth;
     return auth = {
       sessionToken: null,
@@ -136,7 +137,7 @@
         });
       },
       login: function(username, password) {
-        return Parse._request("GET", "/login", null, {
+        return ParseUtils._request("GET", "/login", null, {
           username: username,
           password: password
         }).then(function(response) {
