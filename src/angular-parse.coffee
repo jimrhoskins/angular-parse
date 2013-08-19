@@ -14,18 +14,18 @@ module.factory 'persist', ($q, $window) ->
           result[key] = store.getItem key
         else
           result[key] = undefined
-      $q.when(result)
+      result
 
     set: (obj) ->
       for own key, val of obj
         store.setItem key, val
-      $q.when true
+      true
 
     remove: (keys) ->
       keys = [keys] unless angular.isArray keys
       for key in keys
         localStorage.removeItem key
-      $q.when true
+      true
 
 module.factory 'ParseUtils', ($http, $window) ->
   BaseUrl: "https://api.parse.com/1"
@@ -78,18 +78,17 @@ module.factory 'ParseAuth', (persist, ParseUser) ->
       user
 
     resumeSession: ->
-      persist.get(['PARSE_SESSION_TOKEN', 'PARSE_USER_INFO']).then (r) ->
-        userAttrs = r.PARSE_USER_INFO
-        sessionToken = r.PARSE_SESSION_TOKEN
-        if userAttrs and sessionToken
-          try
-            user = new ParseUser(JSON.parse(userAttrs))
-            auth.currentUser = user
-            auth.sessionToken = sessionToken
-            user.refresh()
-
-          catch e
-            false
+      results = persist.get(['PARSE_SESSION_TOKEN', 'PARSE_USER_INFO'])
+      userAttrs = results.PARSE_USER_INFO
+      sessionToken = results.PARSE_SESSION_TOKEN
+      if userAttrs and sessionToken
+        try
+          user = new ParseUser(JSON.parse(userAttrs))
+          auth.currentUser = user
+          auth.sessionToken = sessionToken
+          user.refresh()
+        catch e
+          false
 
     register: (username, password) ->
       new ParseUser(
