@@ -135,54 +135,56 @@ module.factory 'ParseModel', (ParseUtils) ->
       @className = name
       @attributes = attributes
 
-
     constructor: (data) ->
       for key, value of data
         @[key] = value
+      @_saveCache()
 
-    isNew: ->
+    isNew: =>
       !@objectId
 
-    save: ->
+    save: =>
       if @isNew()
         @create()
       else
         @update()
 
-    refresh: ->
+    refresh: =>
       ParseUtils._request('GET', @).then (response) =>
         for own key, value of response.data
           @[key] = value
         @
 
-    create: ->
+    create: =>
       ParseUtils._request('POST', @constructor, @encodeParse())
       .then (response) =>
         @objectId = response.data.objectId
         @createdAt = response.data.createdAt
         if token = response.data.sessionToken
           @sessionToken = token
+        @_saveCache()
         return @
 
-    update: ->
+    update: =>
       ParseUtils._request('PUT', @, @encodeParse())
       .then (response) =>
         @updatedAt = response.data.updatedAt
+        @_saveCache()
         return @
 
-    destroy: ->
+    destroy: =>
       ParseUtils._request('DELETE', @)
       .then (response) =>
         @objectId = null
         return @
 
-    attributes: ->
+    attributes: =>
       result = {}
       for key in @constructor.attributes
         result[key] = @[key]
       result
 
-    encodeParse: ->
+    encodeParse: =>
       result = {}
       for key in @constructor.attributes
         if key of this
@@ -199,6 +201,12 @@ module.factory 'ParseModel', (ParseUtils) ->
           result[key] = obj
 
       result
+
+    _saveCache: =>
+      @_cache = angular.copy @encodeParse()
+
+    isDirty: =>
+      not angular.equals @_cache, @encodeParse()
 
 module.factory 'ParseDefaultUser', (ParseModel) ->
   class User extends ParseModel

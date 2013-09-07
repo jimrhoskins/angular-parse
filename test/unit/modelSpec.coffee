@@ -36,8 +36,7 @@ describe 'Model', ->
         headers["X-Parse-REST-API-KEY"] == "apiKey"
 
       class Car extends Parse.Model
-        @configure 'Car', 'make', 'model', 'year'
-
+        @configure 'Car', 'make', 'model', 'year', 'parts'
 
   afterEach ->
     backend.verifyNoOutstandingExpectation()
@@ -53,8 +52,6 @@ describe 'Model', ->
 
     expect(Car.className).toEqual 'Car'
     expect(Car.attributes).toEqual ['make', 'model', 'color']
-
-
 
   describe 'create', ->
 
@@ -78,7 +75,6 @@ describe 'Model', ->
       expect(car.objectId).toEqual('foobarbaz')
       expect(car.isNew()).toEqual(false)
 
-
   describe 'update', ->
 
     it 'calls PUTS on a resource', inject () ->
@@ -92,7 +88,7 @@ describe 'Model', ->
         url("/classes/Car/existingID123"),
         includes(car.attributes()),
         signedHeaders
-        
+
       ).respond
         updatedAt: "2012-08-20T02:06:57.931Z"
 
@@ -103,8 +99,71 @@ describe 'Model', ->
       expect(car.updatedAt).toEqual('2012-08-20T02:06:57.931Z')
       expect(car.isNew()).toEqual(false)
 
+  describe 'isDirty', ->
 
-  
+    it 'is not dirty upon creation', ->
+      car = new Car
+        make: "Toyota"
+        year: 2005
+        model: "Camry"
+        objectId: 'existingID123'
+        parts: ['engine', 'chassis']
+
+      expect(car.isDirty()).toBe(false)
+
+    it 'is dirty upon updating', ->
+      car = new Car
+        make: "Toyota"
+        year: 2005
+        model: "Camry"
+        objectId: 'existingID123'
+        parts: ['engine', 'chassis']
+
+      car.model = "Corolla"
+      expect(car.isDirty()).toBe(true)
+
+    it 'is not dirty when returning to old state', ->
+      car = new Car
+        make: "Toyota"
+        year: 2005
+        model: "Camry"
+        objectId: 'existingID123'
+        parts: ['engine', 'chassis']
+
+      car.model = "Corolla"
+      expect(car.isDirty()).toBe(true)
+      car.model = "Camry"
+      expect(car.isDirty()).toBe(false)
+
+      car.parts.push('tires')
+      expect(car.isDirty()).toBe(true)
+      car.parts.splice(2, 1)
+      expect(car.isDirty()).toBe(false)
+
+    it 'updates its cache on save', ->
+      car = new Car
+        make: "Toyota"
+        year: 2005
+        model: "Camry"
+        objectId: 'existingID123'
+        parts: ['engine', 'chassis']
+
+      car.model = "Corolla"
+      expect(car.isDirty()).toBe(true)
+      backend.expectPUT(
+        url("/classes/Car/existingID123"),
+        car.attributes(),
+        signedHeaders
+
+      ).respond
+        updatedAt: "2012-08-20T02:06:57.931Z"
+
+      car.save().then (c) ->
+        expect(c).toBe(car)
+        expect(car.isDirty()).toBe(false)
+
+      backend.flush()
+
   describe 'destroy', ->
 
     it 'calls DELETE on a resource', inject () ->

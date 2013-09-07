@@ -1,6 +1,7 @@
 (function() {
   var CONFIG, module,
     __hasProp = {}.hasOwnProperty,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __slice = [].slice,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -192,11 +193,22 @@
       };
 
       function Model(data) {
+        this.isDirty = __bind(this.isDirty, this);
+        this._saveCache = __bind(this._saveCache, this);
+        this.encodeParse = __bind(this.encodeParse, this);
+        this.attributes = __bind(this.attributes, this);
+        this.destroy = __bind(this.destroy, this);
+        this.update = __bind(this.update, this);
+        this.create = __bind(this.create, this);
+        this.refresh = __bind(this.refresh, this);
+        this.save = __bind(this.save, this);
+        this.isNew = __bind(this.isNew, this);
         var key, value;
         for (key in data) {
           value = data[key];
           this[key] = value;
         }
+        this._saveCache();
       }
 
       Model.prototype.isNew = function() {
@@ -234,6 +246,7 @@
           if (token = response.data.sessionToken) {
             _this.sessionToken = token;
           }
+          _this._saveCache();
           return _this;
         });
       };
@@ -242,6 +255,7 @@
         var _this = this;
         return ParseUtils._request('PUT', this, this.encodeParse()).then(function(response) {
           _this.updatedAt = response.data.updatedAt;
+          _this._saveCache();
           return _this;
         });
       };
@@ -284,6 +298,14 @@
           }
         }
         return result;
+      };
+
+      Model.prototype._saveCache = function() {
+        return this._cache = angular.copy(this.encodeParse());
+      };
+
+      Model.prototype.isDirty = function() {
+        return !angular.equals(this._cache, this.encodeParse());
       };
 
       return Model;
