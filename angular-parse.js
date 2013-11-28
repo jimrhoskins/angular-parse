@@ -14,15 +14,15 @@
     store = $window.localStorage;
     return persist = {
       get: function(keys) {
-        var key, result, _i, _len;
+        var item, key, result, _i, _len;
         if (!angular.isArray(keys)) {
           keys = [keys];
         }
         result = {};
         for (_i = 0, _len = keys.length; _i < _len; _i++) {
           key = keys[_i];
-          if (store.key(key)) {
-            result[key] = store.getItem(key);
+          if (item = store.getItem(key)) {
+            result[key] = item;
           } else {
             result[key] = void 0;
           }

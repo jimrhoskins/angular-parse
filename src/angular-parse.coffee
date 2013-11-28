@@ -10,8 +10,8 @@ module.factory 'persist', ($q, $window) ->
       keys = [keys] unless angular.isArray keys
       result = {}
       for key in keys
-        if store.key key
-          result[key] = store.getItem key
+        if item = store.getItem key
+          result[key] = item
         else
           result[key] = undefined
       result
