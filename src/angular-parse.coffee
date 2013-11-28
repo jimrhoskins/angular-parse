@@ -24,7 +24,7 @@ module.factory 'persist', ($q, $window) ->
     remove: (keys) ->
       keys = [keys] unless angular.isArray keys
       for key in keys
-        localStorage.removeItem key
+        store.removeItem key
       true
 
 module.factory 'ParseUtils', ($http, $window) ->
@@ -46,8 +46,8 @@ module.factory 'ParseUtils', ($http, $window) ->
         "X-Parse-REST-API-KEY" : CONFIG.apiKey
         "Content-Type" : "application/json"
 
-      if $window.localStorage.key('PARSE_SESSION_TOKEN')
-        headers["X-Parse-Session-Token"] = $window.localStorage.getItem('PARSE_SESSION_TOKEN')
+      if token = $window.localStorage.getItem('PARSE_SESSION_TOKEN')
+        headers["X-Parse-Session-Token"] = token
 
       $http
         method: method

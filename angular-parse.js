@@ -45,7 +45,7 @@
         }
         for (_i = 0, _len = keys.length; _i < _len; _i++) {
           key = keys[_i];
-          localStorage.removeItem(key);
+          store.removeItem(key);
         }
         return true;
       }
@@ -57,7 +57,7 @@
     return Parse = {
       BaseUrl: "https://api.parse.com/1",
       _request: function(method, path, data, params) {
-        var headers, id, klass, _ref;
+        var headers, id, klass, token, _ref;
         if (angular.isArray(path)) {
           klass = path[0], id = path[1];
           path = "" + (klass.pathBase()) + "/" + id;
@@ -71,8 +71,8 @@
           "X-Parse-REST-API-KEY": CONFIG.apiKey,
           "Content-Type": "application/json"
         };
-        if ($window.localStorage.key('PARSE_SESSION_TOKEN')) {
-          headers["X-Parse-Session-Token"] = $window.localStorage.getItem('PARSE_SESSION_TOKEN');
+        if (token = $window.localStorage.getItem('PARSE_SESSION_TOKEN')) {
+          headers["X-Parse-Session-Token"] = token;
         }
         return $http({
           method: method,
