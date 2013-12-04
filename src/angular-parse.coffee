@@ -224,17 +224,35 @@ module.factory 'ParseUser', (ParseDefaultUser, ParseCustomUser) ->
   else
     return ParseDefaultUser
 
+module.factory 'ParsePush', [
+  'ParseUtils', '$q', (ParseUtils, $q) ->
+    class Push
+      @send: (data) ->
+        data.where &&= data.where.toJSON().where
+        data.push_time &&= data.push_time.toJSON()
+        data.expiration_time &&= data.expiration_time.toJSON()
+
+        if data.expiration_time and data.expiration_time_interval
+          return $q.reject(
+            "Both expiration_time and expiration_time_interval can't be set"
+          )
+
+        ParseUtils._request('POST', '/push', data)
+]
+
+
 module.provider 'Parse', ->
   return {
     initialize: (applicationId, apiKey) ->
       CONFIG.apiKey = apiKey
       CONFIG.applicationId = applicationId
 
-    $get: (ParseModel, ParseUser, ParseAuth, ParseUtils) ->
+    $get: (ParseModel, ParseUser, ParseAuth, ParseUtils, ParsePush) ->
       BaseUrl: ParseUtils.BaseUrl
       Model: ParseModel
       User: ParseUser
       auth: ParseAuth
+      Push: ParsePush
   }
 
 angular.module('Parse').factory 'ParseCustomUser', (ParseDefaultUser) ->

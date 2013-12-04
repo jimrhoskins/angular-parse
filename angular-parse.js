@@ -350,18 +350,41 @@
     }
   });
 
+  module.factory('ParsePush', [
+    'ParseUtils', '$q', function(ParseUtils, $q) {
+      var Push;
+      return Push = (function() {
+        function Push() {}
+
+        Push.send = function(data) {
+          data.where && (data.where = data.where.toJSON().where);
+          data.push_time && (data.push_time = data.push_time.toJSON());
+          data.expiration_time && (data.expiration_time = data.expiration_time.toJSON());
+          if (data.expiration_time && data.expiration_time_interval) {
+            return $q.defer().reject("Both expiration_time and expiration_time_interval can't be set");
+          }
+          return ParseUtils._request('POST', '/push', data);
+        };
+
+        return Push;
+
+      })();
+    }
+  ]);
+
   module.provider('Parse', function() {
     return {
       initialize: function(applicationId, apiKey) {
         CONFIG.apiKey = apiKey;
         return CONFIG.applicationId = applicationId;
       },
-      $get: function(ParseModel, ParseUser, ParseAuth, ParseUtils) {
+      $get: function(ParseModel, ParseUser, ParseAuth, ParseUtils, ParsePush) {
         return {
           BaseUrl: ParseUtils.BaseUrl,
           Model: ParseModel,
           User: ParseUser,
-          auth: ParseAuth
+          auth: ParseAuth,
+          Push: ParsePush
         };
       }
     };
