@@ -56,7 +56,7 @@
     var Parse;
     return Parse = {
       BaseUrl: "https://api.parse.com/1",
-      _request: function(method, path, data, params) {
+      _request: function(method, path, data, params, type) {
         var headers, id, klass, token, _ref;
         if (angular.isArray(path)) {
           klass = path[0], id = path[1];
@@ -69,7 +69,7 @@
         headers = {
           "X-Parse-Application-Id": CONFIG.applicationId,
           "X-Parse-REST-API-KEY": CONFIG.apiKey,
-          "Content-Type": "application/json"
+          "Content-Type": type != null ? type : "application/json"
         };
         if (token = $window.localStorage.getItem('PARSE_SESSION_TOKEN')) {
           headers["X-Parse-Session-Token"] = token;
@@ -91,6 +91,9 @@
         return Parse._request("POST", "/functions/" + name, data).then(function(r) {
           return r.data.result;
         });
+      },
+      uploadFile: function(file) {
+        return Parse._request("POST", "/files/" + file.name, file, null, file.type);
       }
     };
   });
