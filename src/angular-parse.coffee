@@ -10,8 +10,8 @@ module.factory 'persist', ($q, $window) ->
       keys = [keys] unless angular.isArray keys
       result = {}
       for key in keys
-        if store.key key
-          result[key] = store.getItem key
+        if item = store.getItem key
+          result[key] = item
         else
           result[key] = undefined
       result
@@ -24,14 +24,14 @@ module.factory 'persist', ($q, $window) ->
     remove: (keys) ->
       keys = [keys] unless angular.isArray keys
       for key in keys
-        localStorage.removeItem key
+        store.removeItem key
       true
 
 module.factory 'ParseUtils', ($http, $window) ->
   Parse =
     BaseUrl: "https://api.parse.com/1"
 
-    _request: (method, path, data, params) ->
+    _request: (method, path, data, params, type) ->
 
       if angular.isArray path
         [klass, id] = path
@@ -44,10 +44,10 @@ module.factory 'ParseUtils', ($http, $window) ->
       headers =
         "X-Parse-Application-Id": CONFIG.applicationId
         "X-Parse-REST-API-KEY" : CONFIG.apiKey
-        "Content-Type" : "application/json"
+        "Content-Type" : type ? "application/json"
 
-      if $window.localStorage.key('PARSE_SESSION_TOKEN')
-        headers["X-Parse-Session-Token"] = $window.localStorage.getItem('PARSE_SESSION_TOKEN')
+      if token = $window.localStorage.getItem('PARSE_SESSION_TOKEN')
+        headers["X-Parse-Session-Token"] = token
 
       $http
         method: method
@@ -62,6 +62,9 @@ module.factory 'ParseUtils', ($http, $window) ->
     callFunction: (name, data) ->
       Parse._request("POST", "/functions/#{name}", data).then (r) ->
         r.data.result
+
+    uploadFile: (file) ->
+      Parse._request("POST", "/files/#{file.name}", file, null, file.type)
 
 module.factory 'ParseAuth', (persist, ParseUser, ParseUtils, $q) ->
   auth =
@@ -224,17 +227,35 @@ module.factory 'ParseUser', (ParseDefaultUser, ParseCustomUser) ->
   else
     return ParseDefaultUser
 
+module.factory 'ParsePush', [
+  'ParseUtils', '$q', (ParseUtils, $q) ->
+    class Push
+      @send: (data) ->
+        data.where &&= data.where.toJSON().where
+        data.push_time &&= data.push_time.toJSON()
+        data.expiration_time &&= data.expiration_time.toJSON()
+
+        if data.expiration_time and data.expiration_time_interval
+          return $q.reject(
+            "Both expiration_time and expiration_time_interval can't be set"
+          )
+
+        ParseUtils._request('POST', '/push', data)
+]
+
+
 module.provider 'Parse', ->
   return {
     initialize: (applicationId, apiKey) ->
       CONFIG.apiKey = apiKey
       CONFIG.applicationId = applicationId
 
-    $get: (ParseModel, ParseUser, ParseAuth, ParseUtils) ->
+    $get: (ParseModel, ParseUser, ParseAuth, ParseUtils, ParsePush) ->
       BaseUrl: ParseUtils.BaseUrl
       Model: ParseModel
       User: ParseUser
       auth: ParseAuth
+      Push: ParsePush
   }
 
 angular.module('Parse').factory 'ParseCustomUser', (ParseDefaultUser) ->

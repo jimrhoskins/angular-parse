@@ -14,15 +14,15 @@
     store = $window.localStorage;
     return persist = {
       get: function(keys) {
-        var key, result, _i, _len;
+        var item, key, result, _i, _len;
         if (!angular.isArray(keys)) {
           keys = [keys];
         }
         result = {};
         for (_i = 0, _len = keys.length; _i < _len; _i++) {
           key = keys[_i];
-          if (store.key(key)) {
-            result[key] = store.getItem(key);
+          if (item = store.getItem(key)) {
+            result[key] = item;
           } else {
             result[key] = void 0;
           }
@@ -45,7 +45,7 @@
         }
         for (_i = 0, _len = keys.length; _i < _len; _i++) {
           key = keys[_i];
-          localStorage.removeItem(key);
+          store.removeItem(key);
         }
         return true;
       }
@@ -56,8 +56,8 @@
     var Parse;
     return Parse = {
       BaseUrl: "https://api.parse.com/1",
-      _request: function(method, path, data, params) {
-        var headers, id, klass, _ref;
+      _request: function(method, path, data, params, type) {
+        var headers, id, klass, token, _ref;
         if (angular.isArray(path)) {
           klass = path[0], id = path[1];
           path = "" + (klass.pathBase()) + "/" + id;
@@ -69,10 +69,10 @@
         headers = {
           "X-Parse-Application-Id": CONFIG.applicationId,
           "X-Parse-REST-API-KEY": CONFIG.apiKey,
-          "Content-Type": "application/json"
+          "Content-Type": type != null ? type : "application/json"
         };
-        if ($window.localStorage.key('PARSE_SESSION_TOKEN')) {
-          headers["X-Parse-Session-Token"] = $window.localStorage.getItem('PARSE_SESSION_TOKEN');
+        if (token = $window.localStorage.getItem('PARSE_SESSION_TOKEN')) {
+          headers["X-Parse-Session-Token"] = token;
         }
         return $http({
           method: method,
@@ -91,6 +91,9 @@
         return Parse._request("POST", "/functions/" + name, data).then(function(r) {
           return r.data.result;
         });
+      },
+      uploadFile: function(file) {
+        return Parse._request("POST", "/files/" + file.name, file, null, file.type);
       }
     };
   });
@@ -350,18 +353,41 @@
     }
   });
 
+  module.factory('ParsePush', [
+    'ParseUtils', '$q', function(ParseUtils, $q) {
+      var Push;
+      return Push = (function() {
+        function Push() {}
+
+        Push.send = function(data) {
+          data.where && (data.where = data.where.toJSON().where);
+          data.push_time && (data.push_time = data.push_time.toJSON());
+          data.expiration_time && (data.expiration_time = data.expiration_time.toJSON());
+          if (data.expiration_time && data.expiration_time_interval) {
+            return $q.defer().reject("Both expiration_time and expiration_time_interval can't be set");
+          }
+          return ParseUtils._request('POST', '/push', data);
+        };
+
+        return Push;
+
+      })();
+    }
+  ]);
+
   module.provider('Parse', function() {
     return {
       initialize: function(applicationId, apiKey) {
         CONFIG.apiKey = apiKey;
         return CONFIG.applicationId = applicationId;
       },
-      $get: function(ParseModel, ParseUser, ParseAuth, ParseUtils) {
+      $get: function(ParseModel, ParseUser, ParseAuth, ParseUtils, ParsePush) {
         return {
           BaseUrl: ParseUtils.BaseUrl,
           Model: ParseModel,
           User: ParseUser,
-          auth: ParseAuth
+          auth: ParseAuth,
+          Push: ParsePush
         };
       }
     };
