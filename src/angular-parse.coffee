@@ -31,7 +31,7 @@ module.factory 'ParseUtils', ($http, $window) ->
   Parse =
     BaseUrl: "https://api.parse.com/1"
 
-    _request: (method, path, data, params) ->
+    _request: (method, path, data, params, type) ->
 
       if angular.isArray path
         [klass, id] = path
@@ -44,7 +44,7 @@ module.factory 'ParseUtils', ($http, $window) ->
       headers =
         "X-Parse-Application-Id": CONFIG.applicationId
         "X-Parse-REST-API-KEY" : CONFIG.apiKey
-        "Content-Type" : "application/json"
+        "Content-Type" : type ? "application/json"
 
       if token = $window.localStorage.getItem('PARSE_SESSION_TOKEN')
         headers["X-Parse-Session-Token"] = token
@@ -62,6 +62,9 @@ module.factory 'ParseUtils', ($http, $window) ->
     callFunction: (name, data) ->
       Parse._request("POST", "/functions/#{name}", data).then (r) ->
         r.data.result
+
+    uploadFile: (file) ->
+      Parse._request("POST", "/files/#{file.name}", file, null, file.type)
 
 module.factory 'ParseAuth', (persist, ParseUser, ParseUtils, $q) ->
   auth =
