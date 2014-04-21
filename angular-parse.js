@@ -280,17 +280,17 @@
       };
 
       Model.prototype.encodeParse = function() {
-        var key, obj, result, _i, _len, _ref, _ref1;
+        var key, obj, result, _i, _len, _ref;
         result = {};
         _ref = this.constructor.attributes;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           key = _ref[_i];
           if (key in this) {
             obj = this[key];
-            if ((obj != null) && obj.objectId && ((_ref1 = obj.constructor) != null ? _ref1.className : void 0)) {
+            if ((obj != null) && obj.objectId && obj.className) {
               obj = {
                 __type: "Pointer",
-                className: obj.constructor.className,
+                className: obj.className,
                 objectId: obj.objectId
               };
             }
