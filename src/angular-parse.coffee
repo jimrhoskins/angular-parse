@@ -190,11 +190,11 @@ module.factory 'ParseModel', (ParseUtils) ->
         if key of this
           obj = @[key]
 
-          if obj? and obj.objectId and obj.constructor?.className
+          if obj? and obj.objectId and ( obj.className or obj.constructor?.className )
             # Pointer
             obj = {
               __type: "Pointer"
-              className: obj.constructor.className
+              className: obj.className or obj.constructor.className
               objectId: obj.objectId
             }
 
