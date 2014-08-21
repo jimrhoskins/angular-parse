@@ -59,7 +59,7 @@ attributes of that class
 Using CoffeeScript:
 ```coffeescript
 app.factory 'Car', (Parse) ->
-  class Car extends Parse.model
+  class Car extends Parse.Model
     @configure "Car", "make", "model", "year"
 
     @customClassMethod: (arg) ->
