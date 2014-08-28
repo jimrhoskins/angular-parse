@@ -131,6 +131,14 @@ module.factory 'ParseModel', (ParseUtils) ->
         for item in response.data.results
           new @(item)
 
+    @count: (params) ->
+      params.limit = 0
+      params.count = 1
+
+      ParseUtils._request('GET', @, null, params)
+      .then (response) ->
+        response.data.count
+
     @configure: (name, attributes...) ->
       @className = name
       @attributes = attributes

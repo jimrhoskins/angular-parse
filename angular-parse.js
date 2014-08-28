@@ -185,6 +185,14 @@
         });
       };
 
+      Model.count = function(params) {
+        params.limit = 0;
+        params.count = 1;
+        return ParseUtils._request('GET', this, null, params).then(function(response) {
+          return response.data.count;
+        });
+      };
+
       Model.configure = function() {
         var attributes, name;
         name = arguments[0], attributes = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
