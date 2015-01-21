@@ -197,6 +197,8 @@ module.factory 'ParseModel', (ParseUtils) ->
               className: obj.constructor.className
               objectId: obj.objectId
             }
+            if obj.className == "users"
+              obj.className = "_User"
 
           result[key] = obj
 
