@@ -102,13 +102,16 @@ module.factory 'ParseAuth', (persist, ParseUser, ParseUtils, $q) ->
       ).save().then (user) ->
         auth._login(user)
 
-    login: (username, password) ->
+    login: (username, password, callback) ->
       ParseUtils._request("GET", "/login", null, {
         username: username
         password: password
       })
         .then (response) ->
-          auth._login( new ParseUser(response.data))
+          user = new ParseUser(response.data);
+          if callback != null and typeof callback == 'function'
+            callback(user);
+          auth._login(user)
 
     logout: ->
       persist.remove ['PARSE_SESSION_TOKEN', 'PARSE_USER_INFO']
