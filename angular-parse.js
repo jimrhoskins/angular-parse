@@ -141,12 +141,16 @@
           return auth._login(user);
         });
       },
-      login: function(username, password) {
+      login: function(username, password, callback) {
         return ParseUtils._request("GET", "/login", null, {
           username: username,
           password: password
         }).then(function(response) {
-          return auth._login(new ParseUser(response.data));
+          var user = new ParseUser(response.data);
+          if (callback != null && typeof callback == 'function') {
+            callback(user);
+          }
+          return auth._login(user);
         });
       },
       logout: function() {
