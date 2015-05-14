@@ -3,10 +3,8 @@
 	"version": "0.3.0",
 	"main": [
 		"angular-parse.js"
-	],
+		],
 	"dependencies": {
 	},
-	"install": {
-		"path": "lib"
-	}
+	"ignore": []
 }
