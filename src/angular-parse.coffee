@@ -121,7 +121,7 @@ module.factory 'ParseModel', (ParseUtils) ->
       "/classes/#{@className}"
 
     @find: (id, params) ->
-      ParseUtils._request('GET', "/classes/#{@className}/#{id}", null, params)
+      ParseUtils._request('GET', @pathBase() + "/#{id}", null, params)
         .then (response) =>
           new @(response.data)
 
