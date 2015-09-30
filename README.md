@@ -57,10 +57,32 @@ on the class and pass it the Parse class name, and the name of any
 attributes of that class
 
 Using CoffeeScript:
+
+
+> Parse.Model
+> `path "/classes/modelName"`
+> That means that we will use Parse api path for classes
+
 ```coffeescript
 app.factory 'Car', (Parse) ->
-  class Car extends Parse.model
+  class Car extends Parse.Model
     @configure "Car", "make", "model", "year"
+
+    @customClassMethod: (arg) ->
+      # add custom class methods like this
+
+    customInstanceMethod: (arg) ->
+      # add custom instance methods like this
+```
+
+> Parse.User
+> `path "/users"`
+> The User class extends from Parse.Model the main difference is in the Parse api path
+
+```coffeescript
+app.factory 'User', (Parse) ->
+  class User extends Parse.User
+    @configure "User", "users", "username", "password"
 
     @customClassMethod: (arg) ->
       # add custom class methods like this
