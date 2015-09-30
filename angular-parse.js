@@ -166,7 +166,7 @@
 
       Model.find = function(id, params) {
         var _this = this;
-        return ParseUtils._request('GET', "/classes/" + this.className + "/" + id, null, params).then(function(response) {
+        return ParseUtils._request('GET', this.pathBase() + "/" + id, null, params).then(function(response) {
           return new _this(response.data);
         });
       };
