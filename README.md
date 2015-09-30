@@ -25,8 +25,12 @@ model, it is "configured" by supplying the class name (as defined in
 Parse) as well as which properties are part of that class.
 
 Angular-parse also uses promises for any methods making network calls.
-
 ## Getting started
+
+Install
+
+
+```bower install angular-parse```
 
 Include the JavaScript file
 
